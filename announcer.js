@@ -12,6 +12,8 @@ const client = new Client({
 });
 
 let lastAnnouncedVisits = {};
+const activeChecks = new Set();
+const channelCache = new Map();
 
 function loadLastAnnouncedVisits() {
     if (fs.existsSync(path)) {
@@ -50,15 +52,18 @@ function getGamesFromEnv() {
 }
 
 async function checkMilestone(game) {
+    if (activeChecks.has(game.universeId)) return;
+    activeChecks.add(game.universeId);
+
     try {
         // Fetch Game Details (Visits, Name, Last Updated)
-        const gameResponse = await axios.get(`https://games.roblox.com/v1/games?universeIds=${game.universeId}`);
+        const gameResponse = await axios.get(`https://games.roblox.com/v1/games?universeIds=${game.universeId}`, { timeout: 10000 });
         const gameData = gameResponse.data.data[0];
         if (!gameData) return console.error(`No game data for Universe ID ${game.universeId}`);
 
         // Fetch Places/Subpages
         // placesData contains objects like: { id: 12345, name: "Place Name" }
-        const placesResponse = await axios.get(`https://develop.roblox.com/v1/universes/${game.universeId}/places?sortOrder=Asc&limit=100`);
+        const placesResponse = await axios.get(`https://develop.roblox.com/v1/universes/${game.universeId}/places?sortOrder=Asc&limit=100`, { timeout: 10000 });
         const placesData = placesResponse.data.data;
         
         // Extract current Place IDs and create a map for easy lookup
@@ -89,11 +94,20 @@ async function checkMilestone(game) {
         // --- UPDATED: 2. CHECK FOR NEW PLACES/SUBPAGES ---
         const previousPlaceIds = record.placeIds || [];
         const newPlaceIds = currentPlaceIds.filter(id => !previousPlaceIds.includes(id));
-        const channel = await client.channels.fetch(game.channelId);
+
+        let channel = channelCache.get(game.channelId);
+        if (!channel) {
+            channel = await client.channels.fetch(game.channelId);
+            channelCache.set(game.channelId, channel);
+        }
 
         if (newPlaceIds.length > 0) {
             const placeCount = newPlaceIds.length;
             
+            // Update the record immediately to prevent duplicate announcements if send is slow
+            record.placeIds = currentPlaceIds;
+            hasChanges = true;
+
             // Generate the list of new places with names and links
             const newPlacesList = newPlaceIds.map(id => {
                 const name = currentPlaceMap[id] || `- Unknown Place (${id})`;
@@ -105,10 +119,6 @@ async function checkMilestone(game) {
                             `${newPlacesList}`;
             
             await channel.send(message);
-            
-            // Update the record to include all current places
-            record.placeIds = currentPlaceIds;
-            hasChanges = true;
         } else {
             // Ensure the record reflects the current list even if no new ones are found
             record.placeIds = currentPlaceIds; 
@@ -116,14 +126,15 @@ async function checkMilestone(game) {
 
         // 3. GAME UPDATE (TIMESTAMP) CHECK
         const previousUpdated = record.lastUpdatedTimestamp;
+        const isNewUpdate = previousUpdated && currentUpdated && new Date(currentUpdated) > new Date(previousUpdated);
 
-        if (previousUpdated && previousUpdated !== currentUpdated) {
+        if (isNewUpdate) {
             // New update detected!
-            const unixTimestamp = Math.floor(new Date(currentUpdated).getTime() / 1000);
-            
-            await channel.send(`**${record.name}** updated <t:${unixTimestamp}:R>!`);
             record.lastUpdatedTimestamp = currentUpdated;
             hasChanges = true;
+
+            const unixTimestamp = Math.floor(new Date(currentUpdated).getTime() / 1000);
+            await channel.send(`**${record.name}** updated <t:${unixTimestamp}:R>!`);
         } else if (typeof previousUpdated === 'undefined') {
             record.lastUpdatedTimestamp = currentUpdated;
             hasChanges = true;
@@ -135,8 +146,8 @@ async function checkMilestone(game) {
 
         if (visitCount >= lastVisit + MILESTONE_FREQUENCY) {
             record.lastVisit = nextMilestone;
-            await channel.send(`<@&1360880411114209340> ${record.name} has reached **${nextMilestone.toLocaleString()}** visits!`);
             hasChanges = true;
+            await channel.send(`<@&1360880411114209340> ${record.name} has reached **${nextMilestone.toLocaleString()}** visits!`);
         }
 
         // Save the updated record if any changes occurred
@@ -149,6 +160,8 @@ async function checkMilestone(game) {
         console.log(`${record.name}: ${visitCount} visits, Places: ${currentPlaceIds.length}, Last Updated: ${currentUpdated}`);
     } catch (error) {
         console.error(`Error checking Universe ID ${game.universeId}:`, error.message);
+    } finally {
+        activeChecks.delete(game.universeId);
     }
 }
 
