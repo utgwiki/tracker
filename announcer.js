@@ -134,7 +134,7 @@ async function checkMilestone(game) {
             hasChanges = true;
 
             const unixTimestamp = Math.floor(new Date(currentUpdated).getTime() / 1000);
-            await channel.send(`**${record.name}** updated <t:${unixTimestamp}:R>!`);
+            await channel.send(`<@&1360880411114209340> **${record.name}** updated <t:${unixTimestamp}:R>!`);
         } else if (typeof previousUpdated === 'undefined') {
             record.lastUpdatedTimestamp = currentUpdated;
             hasChanges = true;
@@ -147,7 +147,7 @@ async function checkMilestone(game) {
         if (visitCount >= lastVisit + MILESTONE_FREQUENCY) {
             record.lastVisit = nextMilestone;
             hasChanges = true;
-            await channel.send(`<@&1360880411114209340> ${record.name} has reached **${nextMilestone.toLocaleString()}** visits!`);
+            await channel.send(`<@&1360880411114209340> **${record.name}** has reached **${nextMilestone.toLocaleString()}** visits!`);
         }
 
         // Save the updated record if any changes occurred
