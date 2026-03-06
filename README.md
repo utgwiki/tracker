@@ -1,14 +1,10 @@
-# Roblox Milestone & Update Announcer Bot
-
-This bot announces Roblox game visit milestones and updates to Discord.
+This bot announces Roblox game visit milestones and updates to Discord every 3 minutes.
 
 ## Features
 - **Visit Milestone Announcements**: Get notified every X visits (configurable).
 - **Game Update Alerts**: Receive notifications when your game is updated.
 - **Subplace Detection**: Notifies you when new subplaces/stages are added to the universe.
 - **Multiple Game Support**: Track multiple Roblox games with a single bot instance.
-
----
 
 ## Setup & Configuration
 
@@ -53,7 +49,3 @@ To start the bot, run:
 ```bash
 node announcer.js
 ```
-
----
-
-*The bot checks for updates and milestones every 3 minutes.*
