@@ -6,7 +6,8 @@ This bot announces Roblox game visit milestones and updates to Discord every 3 m
 - **Subplace Detection**: Notifies you when new subplaces/stages are added to the universe.
 - **Multiple Game Support**: Track multiple Roblox games with a single bot instance.
 
-## Setup & Configuration
+## Setup
+Please note that `server.js` exists on the repository so that Instatus is able to get active status of the bot. It can be removed.
 
 1. **Prerequisites**
     - [Node.js](https://nodejs.org/) (v16.11.0 or higher recommended)
@@ -20,23 +21,22 @@ This bot announces Roblox game visit milestones and updates to Discord every 3 m
         cd bartholomew
         npm install
         ```
-
-3. **Configuration**
-    - Copy `.env.example` to `.env` (this preserves the template for others).
-    - Open `.env` and fill in your details:
-    
-        | Variable | Description |
-        | --- | --- |
-        | `TOKEN` | Your Discord bot token. |
-        | `FREQUENCY` | How often to announce visit milestones (e.g., `10000`). |
-        | `UNIVERSEID` | The Roblox Universe ID (NOT the Place ID). |
-        | `CHANNELID` | The Discord channel ID for announcements. |
-
-4. **Running the Bot**
+3. **Running the Bot**
     - To start the bot, run:
         ```bash
         node announcer.js
         ```
+        
+## Configuration
+- Copy `.env.example` to `.env` (this preserves the template for others).
+- Open `.env` and fill in your details:
+
+    | Variable | Description |
+    | --- | --- |
+    | `TOKEN` | Your Discord bot token. |
+    | `FREQUENCY` | How often to announce visit milestones (e.g., `10000`). |
+    | `UNIVERSEID` | The Roblox Universe ID (NOT the Place ID). |
+    | `CHANNELID` | The Discord channel ID for announcements. |
 
 ### How to find your Universe ID
 To get your Universe ID from a Place ID, visit:
