@@ -20,13 +20,13 @@ This bot announces Roblox game visit milestones and updates to Discord.
 ### 2. Installation
 Clone the repository and install dependencies:
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/utgwiki/bartholomew.git
+cd bartholomew
 npm install
 ```
 
 ### 3. Configuration
-1. Rename `.env.example` to `.env`.
+1. Copy `.env.example` to `.env` (this preserves the template for others).
 2. Open `.env` and fill in your details:
 
 | Variable | Description |
@@ -46,6 +46,7 @@ You can track additional games by adding numbered environment variables:
 UNIVERSEID_2=YOUR_SECOND_UNIVERSEID
 CHANNELID_2=YOUR_SECOND_CHANNELID
 ```
+**Important:** Numbered pairs must be contiguous (no gaps like `UNIVERSEID_2` then `UNIVERSEID_4`). The bot scans sequentially and will stop at the first missing pair (e.g., if `UNIVERSEID_3` is missing, `UNIVERSEID_4` will be ignored).
 
 ### 4. Running the Bot
 To start the bot, run:
