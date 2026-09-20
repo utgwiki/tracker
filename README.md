@@ -1,4 +1,8 @@
-Bartholomew announces Roblox game visit milestones and updates to Discord every 3 minutes, and offers various features:
+Update September 20, 2026: utgwiki/tracker will no longer be updated as it is now integrated with [Derik](https://github.com/utgwiki/derik).
+
+---
+
+Tracker announces Roblox game visit milestones and updates to Discord every 3 minutes, and offers various features:
 
 | Feature | Description |
 |---|---|
