@@ -1,4 +1,4 @@
-Update September 20, 2026: utgwiki/tracker will no longer be updated as it is now integrated with [Derik](https://github.com/utgwiki/derik).
+Update September 20, 2026: utgwiki/tracker will no longer be updated as it is now integrated with [Derik's tracker function](https://github.com/utgwiki/derik/blob/main/functions/tracker.js).
 
 ---
 
